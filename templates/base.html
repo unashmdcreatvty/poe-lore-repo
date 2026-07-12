@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PoE Lore Repository{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <link rel="stylesheet" href="{% static 'css/site.css' %}">
+    {% block extra_head %}{% endblock %}
+    <script>
+        /* Apply saved theme before first paint to avoid flash */
+        (function () {
+            var t = localStorage.getItem('theme') || 'dark';
+            if (t !== 'system') document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+</head>
+<body>
+    <header class="container">
+        <nav>
+            <ul>
+                <li><a href="{% url 'lore:home' %}"><strong>PoE Lore</strong></a></li>
+                <li><a href="{% url 'lore:tag_browser' %}">Tags</a></li>
+            </ul>
+            <ul>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'lore:submit_entry' %}">Submit Entry</a></li>
+                <li><a href="{% url 'lore:user_profile' user.pk %}">{{ user }}</a></li>
+                <li>
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-button">Log out</button>
+                    </form>
+                </li>
+                {% else %}
+                <li>
+                    <form method="post" action="{% url 'social:begin' 'discord' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-button">Log in with Discord</button>
+                    </form>
+                </li>
+                {% endif %}
+                <li><a id="theme-toggle" href="#" aria-label="Toggle colour theme">⊙</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+    <script>
+        (function () {
+            var themes = ['dark', 'light', 'system'];
+            var icons  = { dark: '☾', light: '☀', system: '⊙' };
+
+            function current() {
+                return localStorage.getItem('theme') || 'dark';
+            }
+
+            function apply(theme) {
+                if (theme === 'system') {
+                    document.documentElement.removeAttribute('data-theme');
+                } else {
+                    document.documentElement.setAttribute('data-theme', theme);
+                }
+            }
+
+            var btn = document.getElementById('theme-toggle');
+            btn.textContent = icons[current()];
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var next = themes[(themes.indexOf(current()) + 1) % themes.length];
+                localStorage.setItem('theme', next);
+                apply(next);
+                btn.textContent = icons[next];
+            });
+        })();
+    </script>
+</body>
+</html>

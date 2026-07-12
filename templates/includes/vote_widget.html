@@ -1,0 +1,17 @@
+{% if user.is_authenticated %}
+<form method="post" action="{% url 'lore:cast_vote' %}" class="vote-widget">
+    {% csrf_token %}
+    <input type="hidden" name="target_type" value="{{ target_type }}">
+    <input type="hidden" name="target_id" value="{{ target_id }}">
+    <input type="hidden" name="next" value="{{ request.path }}">
+    <button type="submit" name="vote_type" value="up"{% if user_vote == 'up' %} class="active-vote"{% endif %}>▲</button>
+    <span class="score confidence-{{ confidence }}">{{ score }}</span>
+    <button type="submit" name="vote_type" value="down"{% if user_vote == 'down' %} class="active-vote"{% endif %}>▼</button>
+</form>
+{% else %}
+<span class="vote-widget">
+    <span>▲</span>
+    <span class="score confidence-{{ confidence }}">{{ score }}</span>
+    <span>▼</span>
+</span>
+{% endif %}

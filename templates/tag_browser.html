@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Tags — PoE Lore Repository{% endblock %}
+
+{% block content %}
+<h1>Tag Browser</h1>
+{% for category_label, tags in categories %}
+<section>
+    <h2>{{ category_label }}</h2>
+    <ul>
+        {% for tag in tags %}
+        <li>
+            <a href="{% url 'lore:home' %}?tags={{ tag.pk }}">{{ tag.name }}</a>
+            <small>({{ tag.entry_count }})</small>
+        </li>
+        {% endfor %}
+    </ul>
+</section>
+{% empty %}
+<p>No corroborated tags yet.</p>
+{% endfor %}
+{% endblock %}

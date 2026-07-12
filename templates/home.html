@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Home — PoE Lore Repository{% endblock %}
+
+{% block extra_head %}
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2/dist/css/tom-select.default.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<form method="get" action="{% url 'lore:home' %}" class="search-form">
+    <label for="q">
+        Search
+        <input type="text" id="q" name="q" value="{{ q }}" placeholder="Search entry text, source names...">
+    </label>
+    <label for="tags">
+        Tags
+        <select id="tags" name="tags" multiple placeholder="Type to search tags...">
+            {% for tag in selected_tags %}
+            <option value="{{ tag.pk }}" selected>{{ tag.name }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <div class="search-actions">
+        <button type="submit">Search</button>
+        {% if q or selected_tags %}<a href="{% url 'lore:home' %}" role="button" class="secondary">Clear</a>{% endif %}
+    </div>
+</form>
+
+<h2>{% if q or selected_tags %}Results{% else %}Recent Entries{% endif %}</h2>
+
+{% for entry in entries %}
+<article class="entry-card">
+    <h3><a href="{% url 'lore:entry_detail' entry.pk %}">{{ entry.source_name }}</a></h3>
+    <p>{{ entry.text|truncatechars:200 }}</p>
+    <p class="meta">{{ entry.get_source_type_display }} · {{ entry.get_game_display }} · {{ entry.get_status_display }}</p>
+</article>
+{% empty %}
+<p>No entries found.</p>
+{% endfor %}
+
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2/dist/js/tom-select.complete.min.js"></script>
+<script>
+new TomSelect('#tags', {
+    plugins: ['remove_button'],
+    valueField: 'id',
+    labelField: 'name',
+    searchField: 'name',
+    load: function(query, callback) {
+        if (!query.length) return callback();
+        fetch('/api/tags/?q=' + encodeURIComponent(query))
+            .then(r => r.json())
+            .then(data => callback(data.tags))
+            .catch(() => callback());
+    },
+    render: {
+        option: function(data, escape) {
+            return '<div>' + escape(data.name) +
+                   ' <small style="opacity:0.7">(' + escape(data.category) + ')</small></div>';
+        }
+    }
+});
+</script>
+{% endblock %}

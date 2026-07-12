@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ entry.source_name }} — PoE Lore Repository{% endblock %}
+
+{% block content %}
+<article>
+
+    <header>
+        <h1>{{ entry.source_name }}</h1>
+        <p>
+            {{ entry.get_source_type_display }} · {{ entry.get_game_display }}
+            {% if entry.patch_added %} · Added {{ entry.patch_added }}{% endif %}
+            {% if entry.patch_removed %} · Removed {{ entry.patch_removed }}{% endif %}
+        </p>
+        {% if entry.status != 'current' %}
+        <p><strong>{{ entry.get_status_display }}</strong></p>
+        {% endif %}
+    </header>
+
+    <section>
+        <blockquote>{{ entry.text }}</blockquote>
+        {% include 'includes/vote_widget.html' with target_type='entry' target_id=entry.pk confidence=entry_confidence score=entry_score user_vote=user_entry_vote %}
+    </section>
+
+    {% if corroborated_tags %}
+    <section>
+        <h2>Tags</h2>
+        <ul class="tag-list">
+            {% for et in corroborated_tags %}
+            <li class="tag-chip">
+                {{ et.tag.name }} <small>{{ et.tag.get_category_display }}</small>
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+    {% endif %}
+
+    {% if uncorroborated_tags %}
+    <section>
+        <h2>Needs Corroboration</h2>
+        <ul class="tag-list">
+            {% for et in uncorroborated_tags %}
+            <li class="tag-chip uncorroborated">
+                {{ et.tag.name }} <small>{{ et.tag.get_category_display }}</small>
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+    {% endif %}
+
+    {% if entry.context_note %}
+    <section>
+        <h2>Context Note</h2>
+        <p>{{ entry.context_note }}</p>
+        {% include 'includes/vote_widget.html' with target_type='context_note' target_id=entry.pk confidence=note_confidence score=note_score user_vote=user_note_vote %}
+    </section>
+    {% endif %}
+
+    <section>
+        <h2>Comments</h2>
+        {% for comment in comments %}
+        <article>
+            <header>
+                <strong>{{ comment.user }}</strong>
+                <small>{{ comment.created_at|date:"N j, Y" }}</small>
+            </header>
+            <p>{{ comment.text }}</p>
+            {% for reply in comment.replies.all %}
+            <article style="margin-left: 2rem;">
+                <header>
+                    <strong>{{ reply.user }}</strong>
+                    <small>{{ reply.created_at|date:"N j, Y" }}</small>
+                </header>
+                <p>{{ reply.text }}</p>
+            </article>
+            {% endfor %}
+        </article>
+        {% empty %}
+        <p>No comments yet.</p>
+        {% endfor %}
+    </section>
+
+    <footer>
+        <small>Submitted by {{ entry.submitted_by }} on {{ entry.created_at|date:"N j, Y" }}</small>
+    </footer>
+
+</article>
+{% endblock %}

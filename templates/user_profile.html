@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ profile_user }} — PoE Lore Repository{% endblock %}
+
+{% block content %}
+<h1>{{ profile_user }}</h1>
+
+<section>
+    <h2>Stats</h2>
+    <ul>
+        <li>Entries submitted: {{ total_submitted }}</li>
+        <li>High confidence entries: {{ high_confidence_count }}</li>
+        <li>Member since: {{ profile_user.date_joined|date:"N j, Y" }}</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Submissions</h2>
+    {% for entry in entries %}
+    <article>
+        <h3><a href="{% url 'lore:entry_detail' entry.pk %}">{{ entry.source_name }}</a></h3>
+        <p>{{ entry.get_source_type_display }} · {{ entry.get_game_display }} · {{ entry.get_status_display }}</p>
+        <p><small>{{ entry.created_at|date:"N j, Y" }}</small></p>
+    </article>
+    {% empty %}
+    <p>No entries submitted yet.</p>
+    {% endfor %}
+</section>
+{% endblock %}
