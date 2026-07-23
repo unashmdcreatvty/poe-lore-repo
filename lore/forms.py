@@ -1,5 +1,5 @@
 from django import forms
-from .models import Entry
+from .models import Entry, Comment
 
 
 class EntryForm(forms.ModelForm):
@@ -24,3 +24,13 @@ class EntryForm(forms.ModelForm):
             'patch_added': 'The patch in which this text was first confirmed (e.g. 0.5.0). Leave blank if unknown.',
             'context_note': 'Describe the conditions under which you encountered this text — character class, quest state, etc.',
         }
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text']
+        widgets = {
+            'text': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Add a comment...'}),
+        }
+        labels = {'text': ''}

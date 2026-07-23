@@ -7,8 +7,8 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.http import url_has_allowed_host_and_scheme
 
-from .models import Entry, Vote, Tag, EntryTag
-from .forms import EntryForm
+from .models import Entry, Vote, Tag, EntryTag, Comment
+from .forms import EntryForm, CommentForm
 from .confidence import get_confidence
 
 User = get_user_model()
@@ -101,7 +101,26 @@ def entry_detail(request, pk):
         'note_confidence': note_confidence,
         'user_note_vote': user_note_vote,
         'comments': comments,
+        'comment_form': CommentForm(),
     })
+
+
+@login_required
+def add_comment(request, pk):
+    entry = get_object_or_404(Entry, pk=pk)
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.entry = entry
+            comment.user = request.user
+
+            parent_id = request.POST.get('parent_comment')
+            if parent_id:
+                comment.parent_comment = get_object_or_404(Comment, pk=parent_id, entry=entry)
+
+            comment.save()
+    return redirect('lore:entry_detail', pk=pk)
 
 
 @login_required

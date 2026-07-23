@@ -74,10 +74,34 @@
                 <p>{{ reply.text }}</p>
             </article>
             {% endfor %}
+            {% if user.is_authenticated %}
+            <details style="margin-left: 2rem;">
+                <summary>Reply</summary>
+                <form method="post" action="{% url 'lore:add_comment' entry.pk %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="parent_comment" value="{{ comment.pk }}">
+                    {{ comment_form.text }}
+                    <button type="submit">Post Reply</button>
+                </form>
+            </details>
+            {% endif %}
         </article>
         {% empty %}
         <p>No comments yet.</p>
         {% endfor %}
+
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'lore:add_comment' entry.pk %}">
+            {% csrf_token %}
+            {{ comment_form.text }}
+            <button type="submit">Post Comment</button>
+        </form>
+        {% else %}
+        <form method="post" action="{% url 'social:begin' 'discord' %}">
+            {% csrf_token %}
+            <button type="submit">Log in with Discord</button> to leave a comment.
+        </form>
+        {% endif %}
     </section>
 
     <footer>
