@@ -2,7 +2,8 @@ from collections import defaultdict
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count, Q
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
+from django.db.models import Count
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -21,10 +22,13 @@ def home(request):
     tag_ids = request.GET.getlist('tags')
 
     if q:
-        entries = entries.filter(
-            Q(text__icontains=q) |
-            Q(source_name__icontains=q) |
-            Q(context_note__icontains=q)
+        search_vector = SearchVector('text', 'source_name', 'context_note')
+        search_query = SearchQuery(q)
+        entries = (
+            entries
+            .annotate(rank=SearchRank(search_vector, search_query))
+            .filter(rank__gt=0)
+            .order_by('-rank')
         )
 
     selected_tags = []
