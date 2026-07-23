@@ -10,6 +10,7 @@ __pycache__/
 *.log
 local_settings.py
 db.sqlite3
+staticfiles/
 
 # Environment variables (will hold secret keys — never commit these)
 .env
