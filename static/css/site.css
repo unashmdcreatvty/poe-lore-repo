@@ -1,23 +1,145 @@
 /*
  * ── Customisation ─────────────────────────────────────────
- *
- * Override Pico's defaults here. Examples:
- *
- * :root {
- *     --pico-font-family-sans-serif: 'Your Font', sans-serif;
- *     --pico-font-size: 106%;
- *     --pico-primary: #your-accent-colour;
- *     --pico-border-radius: 0.375rem;
- * }
- *
- * To load a Google Font, add a <link> in base.html's <head>:
- *     <link href="https://fonts.googleapis.com/css2?family=YourFont&display=swap" rel="stylesheet">
- * then set --pico-font-family-sans-serif above.
- *
- * For theme-specific overrides:
- * [data-theme="dark"]  { --pico-primary: #your-dark-accent; }
- * [data-theme="light"] { --pico-primary: #your-light-accent; }
+ * PoE aesthetic: dark gothic backgrounds with gold/bronze accents.
+ * Cinzel (engraved display serif) for headings/brand, Inter (clean
+ * sans) for body text — loaded via Google Fonts in base.html.
  */
+
+:root {
+    --pico-font-size: 87.5%;
+    --pico-font-family-sans-serif: 'Inter', var(--pico-font-family-sans-serif);
+    --pico-font-family: 'Inter', var(--pico-font-family-emoji);
+
+    /* Light theme palette (parchment + bronze) */
+    --pico-background-color: #faf6ec;
+    --pico-card-background-color: #f0e9d8;
+    --pico-color: #2a2118;
+    --pico-muted-color: #6b5f4f;
+    --pico-muted-border-color: #e6dcc4;
+    --pico-primary: #7a5c12;
+    --pico-primary-background: #7a5c12;
+    --pico-primary-hover: #8f6c17;
+    --pico-primary-focus: rgba(122, 92, 18, 0.25);
+    --pico-primary-inverse: #fff8ea;
+}
+
+[data-theme="dark"] {
+    --pico-background-color: #15110d;
+    --pico-card-background-color: #211a14;
+    --pico-color: #e9e2d3;
+    --pico-muted-color: #a6998a;
+    --pico-muted-border-color: #3a2f24;
+    --pico-primary: #c9a227;
+    --pico-primary-background: #c9a227;
+    --pico-primary-hover: #ddb943;
+    --pico-primary-focus: rgba(201, 162, 39, 0.35);
+    --pico-primary-inverse: #1a1408;
+}
+
+@media only screen and (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --pico-background-color: #15110d;
+        --pico-card-background-color: #211a14;
+        --pico-color: #e9e2d3;
+        --pico-muted-color: #a6998a;
+        --pico-muted-border-color: #3a2f24;
+        --pico-primary: #c9a227;
+        --pico-primary-background: #c9a227;
+        --pico-primary-hover: #ddb943;
+        --pico-primary-focus: rgba(201, 162, 39, 0.35);
+        --pico-primary-inverse: #1a1408;
+    }
+}
+
+h1, h2, h3, h4, h5, h6, nav > ul:first-child a {
+    font-family: 'Cinzel', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+}
+
+.entry-card h3 {
+    font-family: 'Inter', var(--pico-font-family-sans-serif);
+    font-weight: 600;
+    letter-spacing: normal;
+}
+
+blockquote {
+    font-style: italic;
+    border-left-color: var(--pico-primary);
+}
+
+/* ── Tag search widget (Tom Select) — match native input theming ── */
+[data-theme="dark"] .ts-control,
+[data-theme="dark"] .full .ts-control,
+[data-theme="dark"] .ts-dropdown {
+    background: var(--pico-form-element-background-color);
+    border-color: var(--pico-form-element-border-color);
+    color: var(--pico-color);
+}
+
+[data-theme="dark"] .ts-control > input {
+    color: var(--pico-color);
+}
+
+[data-theme="dark"] .ts-dropdown .optgroup-header {
+    background: var(--pico-form-element-background-color);
+    color: var(--pico-muted-color);
+}
+
+[data-theme="dark"] .ts-dropdown .active {
+    background: var(--pico-card-background-color);
+    color: var(--pico-color);
+}
+
+[data-theme="dark"] .ts-wrapper.multi .ts-control > div {
+    background: var(--pico-primary-background);
+    border-color: var(--pico-primary);
+    color: var(--pico-primary-inverse);
+}
+
+@media only screen and (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .ts-control,
+    :root:not([data-theme="light"]) .full .ts-control,
+    :root:not([data-theme="light"]) .ts-dropdown {
+        background: var(--pico-form-element-background-color);
+        border-color: var(--pico-form-element-border-color);
+        color: var(--pico-color);
+    }
+
+    :root:not([data-theme="light"]) .ts-control > input {
+        color: var(--pico-color);
+    }
+
+    :root:not([data-theme="light"]) .ts-dropdown .optgroup-header {
+        background: var(--pico-form-element-background-color);
+        color: var(--pico-muted-color);
+    }
+
+    :root:not([data-theme="light"]) .ts-dropdown .active {
+        background: var(--pico-card-background-color);
+        color: var(--pico-color);
+    }
+
+    :root:not([data-theme="light"]) .ts-wrapper.multi .ts-control > div {
+        background: var(--pico-primary-background);
+        border-color: var(--pico-primary);
+        color: var(--pico-primary-inverse);
+    }
+}
+
+/* ── Top nav sizing ───────────────────────────────────────── */
+nav ul li {
+    font-size: 1.2rem;
+}
+
+nav li:first-child strong {
+    font-size: 1.9rem;
+}
+
+/* ── Top nav spacing (left group: brand + section tabs) ──── */
+nav > ul:first-child {
+    gap: 2.5rem;
+}
 
 /* ── Nav buttons (logout, login) — styled to look like links ─ */
 nav li form {
@@ -130,14 +252,12 @@ nav li form {
 /* ── Search form ──────────────────────────────────────────── */
 .search-form {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 1rem;
-    align-items: end;
     margin-bottom: 2rem;
 }
 
 .search-form .search-actions {
-    grid-column: 1 / -1;
     display: flex;
     gap: 1rem;
     align-items: center;
